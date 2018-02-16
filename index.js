@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const https = require('https');
 
 function url(symbol) {
@@ -22,7 +23,7 @@ function roundDecimal(raw, args) {
 }
 
 const holdings = require('fs')
-	.readFileSync("holdings.txt", 'utf-8')
+	.readFileSync(__dirname + "/holdings.txt", 'utf-8')
 	.split('\n')
 	.filter(Boolean)
 	.map(l => l.split('\t'))
@@ -30,7 +31,6 @@ const holdings = require('fs')
 		symbol: arr[0],
 		shares: arr[1]
 	}))
-
 
 const promises = holdings.map(h => new Promise((resolve, reject) => {
 	https.get(url(h.symbol), (res) => {
@@ -70,8 +70,6 @@ Promise.all(promises).then(hs => {
 
 	total.deltaValue = total.currentValue - total.startValue
 	total.deltaPercent = total.deltaValue / total.startValue
-
-	console.log(decorated)
 
 	var plusSign = (total.deltaValue >= 0) ? "+" : ""
 	var displayValue = "$" + plusSign + roundDecimal(total.deltaValue, {decimals: 2, forceDecimals: true})
