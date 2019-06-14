@@ -2,8 +2,9 @@
 const https = require('https');
 const ini = require('ini');
 const fs = require('fs');
+const path = require('path');
 
-const token = ini.parse(fs.readFileSync('./private.ini', 'utf-8')).token
+const token = ini.parse(fs.readFileSync(path.resolve(__dirname, 'private.ini'), 'utf-8')).token
 
 function url(symbol) {
 	return `https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=${token}`
