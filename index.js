@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 const https = require('https');
+const ini = require('ini');
+const fs = require('fs');
+
+const token = ini.parse(fs.readFileSync('./private.ini', 'utf-8')).token
 
 function url(symbol) {
-	return "https://api.iextrading.com/1.0/stock/" + symbol + "/batch?types=quote"
+	return `https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=${token}`
 }
 
 function roundDecimal(raw, args) {
@@ -43,9 +47,9 @@ const promises = holdings.map(h => new Promise((resolve, reject) => {
 		res.on('end', () => {
 			var parsedData = JSON.parse(rawData);
 			resolve(Object.assign({}, h, {
-				previousClose: Number(parsedData.quote.previousClose),
-				latestPrice: Number(parsedData.quote.latestPrice),
-				changePercent: Number(parsedData.quote.changePercent)
+				previousClose: Number(parsedData.previousClose),
+				latestPrice: Number(parsedData.latestPrice),
+				changePercent: Number(parsedData.changePercent)
 			}))
 		});
 	}).on('error', (e) => {
